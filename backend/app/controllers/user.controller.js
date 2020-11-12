@@ -1,37 +1,52 @@
 const User = require("../models/user.model.js");
+bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // Create and Save a new user
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (
-    !req.body.first_name ||
-    !req.body.last_name ||
+    !req.body.name ||
     !req.body.email ||
-    !req.body.phone_number ||
-    !req.body.profile_image
+    !req.body.phone ||
+    !req.body.password
   ) {
     return res.status(400).send({
+      status: "error",
       message: "User fields can not be empty",
     });
   }
+
+  await User.findOne({ email: req.body.email }).then((data) => {
+    if (data) {
+      res.status(200).send({
+        status: "error",
+        message: "User already exist.",
+      });
+    }
+  });
   // Create a user
+  const hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
   const user = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
+    name: req.body.name,
     email: req.body.email,
-    phone_number: req.body.phone_number,
-    profile_image: req.body.profile_image,
+    phone: req.body.phone,
+    password: hashedPwd,
   });
 
   // Save user in the database
   user
     .save()
     .then((data) => {
-      res.send(data);
+      res.send({
+        status: "success",
+        data: data,
+      });
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message,
+        status: "error",
+        message: "There is some issue to save data.",
       });
     });
 };
@@ -40,7 +55,10 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
   User.find()
     .then((users) => {
-      res.send(users);
+      res.send({
+        status: "success",
+        data: users,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -50,10 +68,75 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single user with a userId
-exports.findOne = (req, res) => {};
+exports.findOne = async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({
+      status: "error",
+      message: "User id can not be empty",
+    });
+  }
+  await User.findOne({ _id: req.params.id }).then((data) => {
+    if (data) {
+      res.status(200).send({
+        status: "success",
+        data: data,
+      });
+    } else {
+      res.status(500).send({
+        status: "error",
+        data: "User can not be found.",
+      });
+    }
+  });
+};
 
 // Update a user identified by the userId in the request
-exports.update = (req, res) => {};
+exports.update = async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({
+      status: "error",
+      message: "User id can not be empty",
+    });
+  }
+  if (!req.body.name || !req.body.email || !req.body.phone) {
+    return res.status(400).send({
+      status: "error",
+      message: "User fields can not be empty",
+    });
+  }
+  var user = {};
+  await User.findOne({ _id: req.params.id }).then((data) => {
+    if (!data) {
+      res.status(200).send({
+        status: "error",
+        message: "User can not be found.",
+      });
+    } else {
+      user = data;
+    }
+  });
+  user.name = req.body.name;
+  user.phone = req.body.phone;
+  if (req.body.password != "") {
+    user.password = req.body.password;
+  }
+
+  // Save user in the database
+  user
+    .save()
+    .then((data) => {
+      res.send({
+        status: "success",
+        data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        status: "error",
+        message: "There is some issue to save data.",
+      });
+    });
+};
 
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {};
