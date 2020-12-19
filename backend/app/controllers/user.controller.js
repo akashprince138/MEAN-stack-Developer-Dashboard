@@ -1,19 +1,16 @@
 const User = require("../models/user.model.js");
 bcrypt = require("bcrypt");
 const saltRounds = 10;
+const userValidation = require("../validation/user-validadtion");
+const updateUserValidation = require("../validation/update-user-validation");
 
 // Create and Save a new user
 exports.create = async (req, res) => {
-  // Validate request
-  if (
-    !req.body.name ||
-    !req.body.email ||
-    !req.body.phone ||
-    !req.body.password
-  ) {
+  const error = userValidation(req.body);
+  if (error.error) {
     return res.status(400).send({
       status: "error",
-      message: "User fields can not be empty",
+      message: error.error.details[0].message,
     });
   }
 
@@ -98,10 +95,11 @@ exports.update = async (req, res) => {
       message: "User id can not be empty",
     });
   }
-  if (!req.body.name || !req.body.email || !req.body.phone) {
+  const error = updateUserValidation(req.body);
+  if (error.error) {
     return res.status(400).send({
       status: "error",
-      message: "User fields can not be empty",
+      message: error.error.details[0].message,
     });
   }
   var user = {};
