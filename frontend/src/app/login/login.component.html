@@ -3,16 +3,16 @@
     <div class="col-md-2"></div>
     <div class="col-md-10">
       <h2>Login</h2>
-      <form class="example-form">
+      <form class="example-form" [formGroup]="form">
         <mat-form-field class="example-full-width">
           <mat-label>Email</mat-label>
-          <input matInput placeholder="Email">
+          <input matInput placeholder="Email" formControlName="email">
         </mat-form-field>
         <mat-form-field class="example-full-width">
           <mat-label>Password</mat-label>
-          <input matInput placeholder="password">
+          <input matInput placeholder="password" formControlName="password">
         </mat-form-field>
-        <button type="button" class="btn btn-primary">Login</button>
+        <button type="button" class="btn btn-primary" [disabled]="!form.valid" (click)="login();">Login</button>
       </form>
     </div>
   </div>

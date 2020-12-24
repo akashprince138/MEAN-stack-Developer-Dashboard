@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDialogModule} from '@angular/material/dialog';
 import { AddUserComponent } from './add-user/add-user.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,6 +23,7 @@ import { EditUserComponent } from './edit-user/edit-user.component';
   ],
   imports: [
     MatDialogModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
