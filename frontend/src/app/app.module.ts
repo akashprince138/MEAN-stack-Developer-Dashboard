@@ -13,6 +13,9 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { AddUserComponent } from './add-user/add-user.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { LogoutComponent } from './logout/logout.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,9 +23,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     UserListComponent,
     AddUserComponent,
     EditUserComponent,
+    LogoutComponent,
   ],
   imports: [
     MatDialogModule,
+    HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     BrowserModule,
@@ -31,6 +36,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatTableModule,
     MatPaginatorModule
+  ],
+  exports:[
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

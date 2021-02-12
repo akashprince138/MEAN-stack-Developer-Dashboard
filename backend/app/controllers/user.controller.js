@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(500).send({
+      res.status(200).send({
         status: "error",
         message: "There is some issue to save data.",
       });
@@ -58,7 +58,7 @@ exports.findAll = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(500).send({
+      res.status(200).send({
         message: err.message || "Some error occurred while retrieving users.",
       });
     });
@@ -79,7 +79,7 @@ exports.findOne = async (req, res) => {
         data: data,
       });
     } else {
-      res.status(500).send({
+      res.status(200).send({
         status: "error",
         data: "User can not be found.",
       });
@@ -90,7 +90,7 @@ exports.findOne = async (req, res) => {
 // Update a user identified by the userId in the request
 exports.update = async (req, res) => {
   if (!req.params.id) {
-    return res.status(400).send({
+    return res.status(200).send({
       status: "error",
       message: "User id can not be empty",
     });
@@ -137,4 +137,24 @@ exports.update = async (req, res) => {
 };
 
 // Delete a user with the specified userId in the request
-exports.delete = (req, res) => {};
+exports.delete = (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({
+      status: "error",
+      message: "User id can not be empty",
+    });
+  }
+  User.deleteOne({ _id: req.params.id }).then((data) => {
+    if (data) {
+      res.status(200).send({
+        status: "success",
+        data: data,
+      });
+    } else {
+      res.status(200).send({
+        status: "error",
+        data: "User can not be found.",
+      });
+    }
+  });
+};

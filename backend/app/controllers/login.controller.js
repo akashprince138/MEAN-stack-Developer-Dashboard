@@ -27,13 +27,13 @@ exports.create = async (req, res) => {
         token: accessToken,
       });
     } else {
-      res.status(500).send({
+      res.status(200).send({
         status: "error",
         message: "Wrong Email or password.",
       });
     }
   } else {
-    res.status(500).send({
+    res.status(200).send({
       status: "error",
       message: "Email does not exist.",
     });

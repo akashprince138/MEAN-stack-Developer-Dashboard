@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
+import { LoginService } from '../services/login.service';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,7 +9,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
   form:FormGroup;
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private loginService: LoginService, private router: Router) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -19,6 +20,11 @@ export class LoginComponent implements OnInit {
   }
 
   login = async()=>{
-    console.log("this.form.value", this.form.value);
+    this.loginService.login(this.form.value).subscribe((res) => 
+            {
+              if(res['status'] === "success"){
+                this.router.navigate(['/user-list']);
+              }
+            });
   }
 }

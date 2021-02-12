@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ViewChild, OnInit} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import {UsersService} from './../services/users.service'
 
 @Component({
   selector: 'app-user-list',
@@ -10,45 +11,45 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class UserListComponent implements OnInit {
   displayedColumns: string[] = ['name', 'email', 'phone', 'action'];
-  dataSource = new MatTableDataSource<any>(ELEMENT_DATA);
+  dataSource:any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor(
-    private router:Router
+    private router:Router,
+    private usersService: UsersService
   ) { }
 
   ngOnInit(): void {
+    
+    this.users();
+  }
+
+  users = async()=>{
+    this.usersService.users().subscribe((res) => 
+            {
+              this.dataSource = new MatTableDataSource<any>(res['data']);
+              
+    this.dataSource.paginator = this.paginator;
+            });
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   addUser = ()=>{
     this.router.navigate(['/add-user']);
   }
 
-  delete = (data)=>{
-    console.log('data',data);
+  editUser = (id)=>{
+    this.router.navigate(['/edit-user/'+id]);
+  }
+
+  delete = (id)=>{
     if(confirm("Are you sure to delete ")) {
-    console.log("Implement delete functionality here");
+    this.usersService.deleteUser(id).subscribe((res) => 
+            {
+              this.users();
+            });
     }
   }
 }
 
-const ELEMENT_DATA: any[] = [
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-  {name: "akash", email: 'akash@gmail.com', phone: 1234567890, action: ''},
-];
